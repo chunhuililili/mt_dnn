@@ -1,0 +1,251 @@
+afqmc:
+  # AFQMC 蚂蚁金融语义相似度 Ant Financial Question Matching Corpus
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification
+cmnli:
+  # 自然语言推理中文版
+  # CMNLI数据由两部分组成：XNLI和MNLI。数据来自于fiction，telephone，travel，government，slate等，对原始MNLI数据和XNLI数据进行了中英文转化，保留原始训练集，合并XNLI中的dev和MNLI中的matched作为CMNLI的dev，合并XNLI中的test和MNLI中的mismatched作为CMNLI的test，并打乱顺序。该数据集可用于判断给定的两个句子之间属于蕴涵、中立、矛盾关系。
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false 
+  labels:
+  - contradiction
+  - neutral
+  - entailment
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 3
+  task_type: Classification
+csl: 
+  # 中文科技文献数据集(CSL)取自中文论文摘要及其关键词，论文选自部分中文社会科学和自然科学核心期刊。 
+  # 使用tf-idf生成伪造关键词与论文真实关键词混合，构造摘要-关键词对，任务目标是根据摘要判断关键词是否全部为真实关键词。
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification
+iflytek:
+  # 长文本分类 Long Text classification
+  # 该数据集共有1.7万多条关于app应用描述的长文本标注数据，包含和日常生活相关的各类应用主题，共119个类别："打车":0,"地图导航":1,"免费WIFI":2,"租车":3,….,"女性":115,"经营":116,"收款":117,"其他":118(分别用0.218表示)。
+  data_format: PremiseOnly
+  enable_san: false
+  labels:
+  - 打车
+  - 地图导航
+  - 免费WIFI
+  - 租车
+  - 同城服务
+  - 快递物流
+  - 婚庆
+  - 家政
+  - 公共交通
+  - 政务
+  - 社区服务
+  - 薅羊毛
+  - 魔幻
+  - 仙侠
+  - 卡牌
+  - 飞行空战
+  - 射击游戏
+  - 休闲益智
+  - 动作类
+  - 体育竞技
+  - 棋牌中心
+  - 经营养成
+  - 策略
+  - MOBA
+  - 辅助工具
+  - 约会社交
+  - 即时通讯
+  - 工作社交
+  - 论坛圈子
+  - 婚恋社交
+  - 情侣社交
+  - 社交工具
+  - 生活社交
+  - 微博博客
+  - 新闻
+  - 漫画
+  - 小说
+  - 技术
+  - 教辅
+  - 问答交流
+  - 搞笑
+  - 杂志
+  - 百科
+  - 影视娱乐
+  - 求职
+  - 兼职
+  - 视频
+  - 短视频
+  - 音乐
+  - 直播
+  - 电台
+  - K歌
+  - 成人
+  - 中小学
+  - 职考
+  - 公务员
+  - 英语
+  - 视频教育
+  - 高等教育
+  - 成人教育
+  - 艺术
+  - 语言(非英语)
+  - 旅游资讯
+  - 综合预定
+  - 民航
+  - 铁路
+  - 酒店
+  - 行程管理
+  - 民宿短租
+  - 出国
+  - 工具
+  - 亲子儿童
+  - 母婴
+  - 驾校
+  - 违章
+  - 汽车咨询
+  - 汽车交易
+  - 日常养车
+  - 行车辅助
+  - 租房
+  - 买房
+  - 装修家居
+  - 电子产品
+  - 问诊挂号
+  - 养生保健
+  - 医疗服务
+  - 减肥瘦身
+  - 美妆美业
+  - 菜谱
+  - 餐饮店
+  - 体育咨讯
+  - 运动健身
+  - 支付
+  - 保险
+  - 股票
+  - 借贷
+  - 理财
+  - 彩票
+  - 记账
+  - 银行
+  - 美颜
+  - 影像剪辑
+  - 摄影修图
+  - 相机
+  - 绘画
+  - 二手
+  - 电商
+  - 团购
+  - 外卖
+  - 电影票务
+  - 社区超市
+  - 购物咨询
+  - 笔记
+  - 办公
+  - 日程管理
+  - 女性
+  - 经营
+  - 收款
+  - 其他
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 119
+  task_type: Classification
+tnews:
+  # TNEWS' 今日头条中文新闻（短文本）分类 Short Text Classificaiton for News
+  data_format: PremiseOnly
+  enable_san: false
+  labels:
+  - news_story
+  - news_culture
+  - news_entertainment
+  - news_sports
+  - news_finance
+  - news_house
+  - news_car
+  - news_edu
+  - news_tech
+  - news_military
+  - news_travel
+  - news_world
+  - news_stock
+  - news_agriculture
+  - news_game
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 15
+  task_type: Classification
+wsc:
+  # Winograd Scheme Challenge（WSC）是一类代词消歧的任务。新版与原CLUE项目WSC内容不同
+  # 即判断句子中的代词指代的是哪个名词。题目以真假判别的方式出现，如：
+  # 句子：这时候放在床上枕头旁边的手机响了，我感到奇怪，因为欠费已被停机两个月，现在它突然响了。需要判断“它”指代的是“床”、“枕头”，还是“手机”？
+  # 数据来源：数据有CLUE benchmark提供，从中国现当代作家文学作品中抽取，再经语言专家人工挑选、标注。
+  data_format: PremiseOnly
+  enable_san: false
+  labels:
+  - "true"
+  - "false"
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification
+bq:
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification
+lcqmc:
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false
+  metric_meta:
+  - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification
+pawsx:
+  data_format: PremiseAndOneHypothesis
+  dropout_p: 0.2
+  enable_san: false
+  metric_meta:
+    - ACC
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  n_class: 2
+  task_type: Classification

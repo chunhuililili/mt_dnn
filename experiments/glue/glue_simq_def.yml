@@ -1,0 +1,33 @@
+pawsx:
+  data_format: PremiseAndOneHypothesis
+  enable_san: true
+  metric_meta:
+  - ACC
+  - F1
+  n_class: 2
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  task_type: Classification
+lcqmc:
+  data_format: PremiseAndOneHypothesis
+  enable_san: true
+  metric_meta:
+  - ACC
+  - F1
+  n_class: 2
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion
+  task_type: Classification
+bq:
+  data_format: PremiseAndOneHypothesis                                                    
+  enable_san: true
+  metric_meta:                                      
+  - ACC
+  - F1
+  n_class: 2
+  loss: CeCriterion
+  kd_loss: MseCriterion
+  adv_loss: SymKlCriterion    
+  task_type: Classification
