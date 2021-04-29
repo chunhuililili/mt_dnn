@@ -33,6 +33,6 @@ task_def="experiments/glue/glue_simq_def.yml"
 model_dir="checkpoints/${tstr}"
 log_file="${model_dir}/log.log"
 encoder_type=1
-python train.py --data_dir ${DATA_DIR} --init_checkpoint ${BERT_PATH} --batch_size ${BATCH_SIZE} --output_dir ${model_dir} --log_file ${log_file} --answer_opt ${answer_opt} --optimizer ${optim} --train_datasets ${train_datasets} --test_datasets ${test_datasets} --grad_clipping ${grad_clipping} --global_grad_clipping ${global_grad_clipping} --learning_rate ${lr} --save_per_updates_on --save_per_updates 3000  --task_def $task_def  
+python train.py --data_dir ${DATA_DIR} --init_checkpoint ${BERT_PATH} --batch_size ${BATCH_SIZE} --output_dir ${model_dir} --log_file ${log_file} --answer_opt ${answer_opt} --optimizer ${optim} --train_datasets ${train_datasets} --test_datasets ${test_datasets} --grad_clipping ${grad_clipping} --global_grad_clipping ${global_grad_clipping} --learning_rate ${lr} --save_per_updates_on --save_per_updates 3000  --task_def $task_def
 #--init_config  $CONFIG_PATH --encoder_type $encoder_type
 #--resume --model_ckpt $resume_model_ckpt --save_per_updates_on --save_per_updates 1000

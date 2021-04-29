@@ -37,13 +37,13 @@ class SANBertNetwork(nn.Module):
         config_class, model_class, _ = MODEL_CLASSES[literal_encoder_type]
         if not initial_from_local:
             # self.bert = model_class.from_pretrained(opt['init_checkpoint'], config=self.preloaded_config)
-            print("####load from init_ckpt {}".format(opt['init_checkpoint']))
+            #print("####load from init_ckpt {}".format(opt['init_checkpoint']))
             self.bert = model_class.from_pretrained(opt['init_checkpoint'], mirror='tuna')
         else:
             self.preloaded_config = config_class.from_dict(opt)  # load config from opt
             self.preloaded_config.output_hidden_states = True # return all hidden states
             self.bert = model_class(self.preloaded_config)
-            print("####load from preload_config {}".format(self.preloaded_config))
+            #print("####load from preload_config {}".format(self.preloaded_config))
         #print("inited self.bert={}".format(self.bert))
         hidden_size = self.bert.config.hidden_size
 

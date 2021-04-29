@@ -40,9 +40,11 @@ def main():
     parser = train_config(parser)
     args = parser.parse_args()
     # load model
-    device = torch.device("cuda")
+    #device = torch.device("cuda")
     checkpoint_path = args.init_checkpoint
     assert os.path.exists(checkpoint_path)
+    print("cuda={}".format(args.cuda))
+    args.cuda=False
     if args.cuda:
         state_dict = torch.load(checkpoint_path)
         device = torch.device("cuda")

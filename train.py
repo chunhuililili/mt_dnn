@@ -253,7 +253,7 @@ def main():
     else:
         device = torch.device("cpu")
 
-    print("***device={}".format(device))
+
     opt = vars(args)
     # update data dir
     opt['data_dir'] = data_dir
@@ -295,6 +295,7 @@ def main():
     for dataset in args.test_datasets:
         prefix = dataset.split('_')[0]
         task_def = task_defs.get_task_def(prefix)
+        print("prefix={}".format(prefix))
         task_id = tasks[prefix]
         task_type = task_def.task_type
         data_type = task_def.data_type
@@ -372,7 +373,8 @@ def main():
         literal_encoder_type = EncoderModelType(opt['encoder_type']).name.lower()
         config_class, model_class, tokenizer_class = MODEL_CLASSES[literal_encoder_type]
         config = config_class.from_pretrained(init_model).to_dict()
-        print("***loaded model={}".format(config))
+
+    print("[chunhui] 2 args.test_datasets={}".format(args.test_datasets))
 
     config['attention_probs_dropout_prob'] = args.bert_dropout_p
     config['hidden_dropout_prob'] = args.bert_dropout_p
@@ -380,9 +382,16 @@ def main():
     if args.num_hidden_layers > 0:
         config['num_hidden_layers'] = args.num_hidden_layers
 
+    if args.debug:
+        config['log_per_updates']=5
+        config['save_per_updates']=10
+        config['save_per_updates_on']=True
+
+    if "test_datasets" in config:
+        del config["test_datasets"]
     opt.update(config)
 
-    print("before model.init")
+
     model = MTDNNModel(opt, device=device, state_dict=state_dict, num_train_step=num_all_batches)
     if args.resume and args.model_ckpt:
         print_message(logger, 'loading model from {}'.format(args.model_ckpt))
@@ -400,13 +409,12 @@ def main():
         writer.write('\n{}\n{}\n'.format(headline, model.network))
 
     print_message(logger, "Total number of params: {}".format(model.total_param))
-
     # tensorboard
     tensorboard = None
     if args.tensorboard:
         args.tensorboard_logdir = os.path.join(args.output_dir, args.tensorboard_logdir)
         tensorboard = SummaryWriter(log_dir=args.tensorboard_logdir)
-    
+
     if args.encode_mode:
         for idx, dataset in enumerate(args.test_datasets):
             prefix = dataset.split('_')[0]
