@@ -229,45 +229,16 @@ def evaluation(model, datasets, data_list, task_defs, output_dir='checkpoints', 
                     from experiments.glue.glue_utils import submit
                     official_score_file = os.path.join(output_dir, '{}_{}_scores_{}.tsv'.format(dataset, test_prefix.lower(), updates_str))
                     submit(official_score_file, results, label_dict)
-def initialize_distributed(args):
-    """Initialize torch.distributed."""
-    args.rank = int(os.getenv('RANK', '0'))
-    args.world_size = int(os.getenv("WORLD_SIZE", '1'))
-
-    if os.getenv('OMPI_COMM_WORLD_LOCAL_RANK'):
-        # We are using (OpenMPI) mpirun for launching distributed data parallel processes
-        local_rank = int(os.getenv('OMPI_COMM_WORLD_LOCAL_RANK'))
-        local_size = int(os.getenv('OMPI_COMM_WORLD_LOCAL_SIZE'))
-        args.local_rank = local_rank
-        args.rank = nodeid * local_size + local_rank
-        args.world_size = num_nodes * local_size
-    #args.batch_size = args.batch_size * args.world_size
-
-    device = args.rank % torch.cuda.device_count()
-    if args.local_rank is not None:
-        device = args.local_rank
-    torch.cuda.set_device(device)
-    device = torch.device('cuda', args.local_rank)
-    print("***device={}".format(device))
-    # Call the init process
-    init_method = 'tcp://'
-    master_ip = os.getenv('MASTER_ADDR', 'localhost')
-    master_port = os.getenv('MASTER_PORT', '6600')
-    init_method += master_ip + ':' + master_port
-    torch.distributed.init_process_group(
-        backend=args.backend,
-        world_size=args.world_size, rank=args.rank,
-        init_method=init_method)
-    return device
 
 def print_message(logger, message, level=0):
-    if torch.distributed.is_initialized():
+    '''f torch.distributed.is_initialized():
         if torch.distributed.get_rank() == 0:
             do_logging = True
         else:
             do_logging = False
     else:
-        do_logging = True
+        do_logging = True'''
+    do_logging = True
     if do_logging:
         if level == 1:
             logger.warning(message)
@@ -277,9 +248,7 @@ def print_message(logger, message, level=0):
 def main():
      #set up dist
     device = torch.device("cuda")
-    if args.local_rank > -1:
-        device = initialize_distributed(args)
-    elif torch.cuda.is_available():
+    if torch.cuda.is_available():
         device = torch.device("cuda")
     else:
         device = torch.device("cpu")
@@ -367,22 +336,14 @@ def main():
     print_message(logger, '############# Gradient Accumulation Info #############')
 
     init_model = args.init_checkpoint
-    init_config = args.init_config
     state_dict = None
-    config = {}
 
     if os.path.exists(init_model):
         if encoder_type == EncoderModelType.BERT or \
             encoder_type == EncoderModelType.DEBERTA or \
             encoder_type == EncoderModelType.ELECTRA:
-            #config = BertConfig(os.path.join(init_config))
-            #model = BertModel(config)
-            #model.load_state_dict(torch.load(init_model))
-            #state_dict['state'] = model.state_dict
-            #state_dict['config'] = config
-            #state_dict = torch.load(init_model, map_location=device)
-            state_dict = torch.load(init_model, map_location=lambda storage, loc: storage.cuda(device))
-            #config = state_dict['config']
+            state_dict = torch.load(init_model, map_location=device)
+            config = state_dict['config']
         elif encoder_type == EncoderModelType.ROBERTA or encoder_type == EncoderModelType.XLM:
             model_path = '{}/model.pt'.format(init_model)
             #state_dict = torch.load(model_path, map_location=device)
@@ -400,11 +361,11 @@ def main():
             config_class, model_class, tokenizer_class = MODEL_CLASSES[literal_encoder_type]
             config = config_class.from_pretrained(arch).to_dict()
             state_dict = {'state': state}
-        elif encoder_type == EncoderModelType.NEZHA:
+        '''elif encoder_type == EncoderModelType.NEZHA:
             config = BertConfig(os.path.join(init_config))
             model = BertForSequenceClassification(config, num_labels=2)
             model.load_state_dict(torch.load(init_model))
-            state_dict = model.state_dict
+            state_dict = model.state_dict'''
     else:
         if opt['encoder_type'] not in EncoderModelType._value2member_map_:
             raise ValueError("encoder_type is out of pre-defined types")

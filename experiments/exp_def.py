@@ -35,7 +35,7 @@ class TaskDef(dict):
 
 class TaskDefs:
     def __init__(self, task_def_path):
-        self._task_def_dic = yaml.safe_load(open(task_def_path))
+        self._task_def_dic = yaml.safe_load(open(task_def_path, encoding='UTF-8'))
         print("task_def_path={}".format(task_def_path))
         global_map = {}
         n_class_map = {}

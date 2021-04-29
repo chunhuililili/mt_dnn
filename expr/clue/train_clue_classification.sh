@@ -12,10 +12,10 @@ OUT_PATH="expr/clue/clue_classifiers1/"$TRAIN_DATASET$tstr
 BATCH_SIZE=16
 MAX_SEQ_SIZE=128
 EPOCH_NUM=5
-export CUDA_VISIBLE_DEVICES=7
+#export CUDA_VISIBLE_DEVICES=7
 LOG=$OUT_PATH/$tstr/log.log
 
-python3 -m train \
+python -m train \
     --name clue_multi_task \
     --data_dir $DATA_DIR \
     --task_def $TASK_DEF \

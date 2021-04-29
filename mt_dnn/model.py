@@ -47,7 +47,7 @@ class MTDNNModel(object):
         self.eff_perturb = AverageMeter()
         self.initial_from_local = True if state_dict else False
 
-        #print('*****initial_from_local={}\n'.format(self.initial_from_local))
+        print('*****initial_from_local={}\n'.format(self.initial_from_local))
         model = SANBertNetwork(opt, initial_from_local=self.initial_from_local)
         self.total_param = sum([p.nelement() for p in model.parameters() if p.requires_grad])
         if opt['cuda']:
