@@ -196,6 +196,7 @@ def evaluation(model, datasets, data_list, task_defs, output_dir='checkpoints', 
     else:
         updates_str = "epoch"
     updates = model.updates if n_updates > 0 else epoch
+    acc = 0.0
     for idx, dataset in enumerate(datasets):
         prefix = dataset.split('_')[0]
         task_def = task_defs.get_task_def(prefix)
@@ -211,6 +212,8 @@ def evaluation(model, datasets, data_list, task_defs, output_dir='checkpoints', 
                                                                                 label_mapper=label_dict,
                                                                                 task_type=task_def.task_type)
             for key, val in test_metrics.items():
+                if key=='ACC':
+                    acc = val
                 if tensorboard:
                     tensorboard.add_scalar('{}/{}/{}'.format(test_prefix, dataset, key), val, global_step=updates)
                 if isinstance(val, str):
@@ -229,6 +232,7 @@ def evaluation(model, datasets, data_list, task_defs, output_dir='checkpoints', 
                     from experiments.glue.glue_utils import submit
                     official_score_file = os.path.join(output_dir, '{}_{}_scores_{}.tsv'.format(dataset, test_prefix.lower(), updates_str))
                     submit(official_score_file, results, label_dict)
+    return acc
 
 def print_message(logger, message, level=0):
     '''f torch.distributed.is_initialized():
@@ -436,6 +440,8 @@ def main():
         start = datetime.now()
 
         #print("multi_task_train_data={}".format(type(multi_task_train_data)))
+        min_loss = 100000
+        max_acc=0.0  # 随便设置一个比较大的数
         for i, (batch_meta, batch_data) in enumerate(multi_task_train_data):
             batch_meta, batch_data = Collater.patch_data(device, batch_meta, batch_data)
             task_id = batch_meta['task_id']
@@ -463,17 +469,18 @@ def main():
 
             if args.save_per_updates_on and ((model.local_updates) % (args.save_per_updates * args.grad_accumulation_step) == 0) and args.local_rank in [-1, 0]:
                 model_file = os.path.join(output_dir, 'model_{}_{}.pt'.format(epoch, model.updates))
-                evaluation(model, args.test_datasets, dev_data_list, task_defs, output_dir, epoch, n_updates=args.save_per_updates, with_label=True, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=False, device=device, logger=logger)
+                dev_acc = evaluation(model, args.test_datasets, dev_data_list, task_defs, output_dir, epoch, n_updates=args.save_per_updates, with_label=True, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=False, device=device, logger=logger)
                 evaluation(model, args.test_datasets, test_data_list, task_defs, output_dir, epoch, n_updates=args.save_per_updates, with_label=False, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=True, device=device, logger=logger)
-                print_message(logger, 'Saving mt-dnn model to {}'.format(model_file))
-                model.save(model_file)
+                if (model.train_loss.avg<min_loss and dev_acc>max_acc):
+                    print_message(logger, 'Saving mt-dnn model to {}'.format(model_file))
+                    model.save(model_file)
 
-        evaluation(model, args.test_datasets, dev_data_list, task_defs, output_dir, epoch, with_label=True, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=False, device=device, logger=logger)
+        '''dev_acc = evaluation(model, args.test_datasets, dev_data_list, task_defs, output_dir, epoch, with_label=True, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=False, device=device, logger=logger)
         evaluation(model, args.test_datasets, test_data_list, task_defs, output_dir, epoch, with_label=False, tensorboard=tensorboard, glue_format_on=args.glue_format_on, test_on=True, device=device, logger=logger)
         print_message(logger, '[new test scores at {} saved.]'.format(epoch))
-        if args.local_rank in [-1, 0]:
+        if args.local_rank in [-1, 0] and model.train_loss.avg<min_loss and dev_acc>max_acc:
             model_file = os.path.join(output_dir, 'model_{}.pt'.format(epoch))
-            model.save(model_file)
+            model.save(model_file)'''
     if args.tensorboard:
         tensorboard.close()
 

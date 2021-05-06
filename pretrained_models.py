@@ -1,6 +1,4 @@
 from transformers import *
-#from transformers import BertConfig, BertModel, BertTokenizer
-#from transformers import RobertaConfig, RobertaModel, RobertaTokenizer
 from module.san_model import SanModel
 from modeling_nezha import BertForSequenceClassification
 MODEL_CLASSES = {
