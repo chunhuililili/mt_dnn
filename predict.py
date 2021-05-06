@@ -28,7 +28,7 @@ def train_config(parser):
     parser.add_argument('--batch_size_eval', type=int, default=8)
     parser.add_argument('--cuda', type=bool, default=torch.cuda.is_available(),
                     help='whether to use GPU acceleration.')
-    parser.add_argument("--init_checkpoint", default='mt_dnn_models/bert_model_base_uncased.pt', type=str)
+    parser.add_argument("--checkpoint", default='mt_dnn_models/bert_model_base_uncased.pt', type=str)
     return parser
 
 
@@ -41,7 +41,7 @@ def main():
     args = parser.parse_args()
     # load model
     #device = torch.device("cuda")
-    checkpoint_path = args.init_checkpoint
+    checkpoint_path = args.checkpoint
     assert os.path.exists(checkpoint_path)
     print("cuda={}".format(args.cuda))
     args.cuda=False

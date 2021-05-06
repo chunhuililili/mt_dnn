@@ -389,6 +389,12 @@ def main():
 
     if "test_datasets" in config:
         del config["test_datasets"]
+    if "epochs" in config:
+        del config["epochs"]
+    if "resume" in config:
+        del config["resume"]
+    if "model_ckpt" in config:
+        del config["model_ckpt"]
     opt.update(config)
 
 
@@ -424,6 +430,7 @@ def main():
             torch.save(encoding, os.path.join(output_dir, '{}_encoding.pt'.format(dataset)))
         return
 
+    print_message(logger, 'args.epoch={}'.format(args.epochs), level=1)
     for epoch in range(0, args.epochs):
         print_message(logger, 'At epoch {}'.format(epoch), level=1)
         start = datetime.now()

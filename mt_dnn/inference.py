@@ -46,4 +46,8 @@ def eval_model(model, data, metric_meta, device, with_label=True, label_mapper=N
         predictions, scores = squad_utils.select_answers(ids, predictions, scores)
     if with_label:
         metrics = calc_metrics(metric_meta, golds, predictions, scores, label_mapper)
+    for i in range(min(len(ids),10)):
+        print("{}\t{}\t{}\t{}\n".format(ids[i], predictions[i], scores[2 * i], scores[2 * i + 1]))
+
+    #print("score heads={}".format(scores[:10]))
     return metrics, predictions, scores, golds, ids
